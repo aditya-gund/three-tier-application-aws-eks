@@ -9,8 +9,6 @@ A hands-on DevOps project demonstrating the containerization, deployment, exposu
 <br/>
 
 
-<img width="1774" height="887" alt="Achitecture" src="https://github.com/user-attachments/assets/79012d08-c3e3-4faf-8807-1de9526227ce" />
-
 </div>
 
 📌 Project Overview
@@ -50,48 +48,8 @@ Project objective: understand the complete DevOps flow from source code → cont
 🏗️ Architecture
 
 <p align="center">
-  <img src="docs/architecture.png" alt="Three-Tier Application AWS EKS Architecture" width="100%">
+<img width="1774" height="887" alt="Achitecture" src="https://github.com/user-attachments/assets/79012d08-c3e3-4faf-8807-1de9526227ce" />
 </p>
-
-End-to-End Flow
-
-Developer
-    │
-    ▼
-GitHub Repository
-    │
-    ├───────────────┐
-    │               │
-    ▼               ▼
-React.js         Node.js
-    │               │
-    └───────┬───────┘
-            │
-            ▼
-          Docker
-            │
-            ▼
-       Amazon ECR
-            │
-            ▼
-     Amazon EKS Cluster
-            │
-     ┌──────┼───────────┐
-     │      │           │
-     ▼      ▼           ▼
- Frontend Backend     MongoDB
-   Pods     Pods        Pods
-     │      │           │
-     └──────┴───────────┘
-            │
-            ▼
-AWS Load Balancer Controller
-            │
-            ▼
-      AWS Load Balancer
-            │
-            ▼
-       End User / Browser
 
 🔄 Deployment Lifecycle
 
