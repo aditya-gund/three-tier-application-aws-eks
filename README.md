@@ -1,399 +1,411 @@
+<div align="center">
+
 Three-Tier Application Deployment on AWS EKS
 
-A hands-on DevOps project demonstrating how to containerize and deploy a three-tier web application consisting of a React.js frontend, Node.js backend, and MongoDB database on Amazon EKS using Docker, Amazon ECR, Kubernetes, AWS Load Balancer Controller, Terraform, and CI/CD tooling.
+React.js • Node.js • MongoDB • Docker • Amazon ECR • Kubernetes • Amazon EKS
 
-Project goal: Build an end-to-end containerized application platform, understand the infrastructure and deployment flow, and demonstrate practical troubleshooting across Linux, AWS, Docker, Kubernetes, networking, and CI/CD.
+A hands-on DevOps project demonstrating the containerization, deployment, exposure, and troubleshooting of a three-tier application on AWS using Kubernetes and Amazon EKS.
 
-Architecture
+<br/>
 
 
+<img width="1774" height="887" alt="Achitecture" src="https://github.com/user-attachments/assets/79012d08-c3e3-4faf-8807-1de9526227ce" />
 
-High-Level Flow
+</div>
 
-Developer / GitHub
-        |
-        v
-+---------------------+
-| Application Source  |
-| React / Node / Mongo |
-+---------------------+
-        |
-        v
-+---------------------+
-|       Docker        |
-| Build Container     |
-| Images              |
-+---------------------+
-        |
-        v
-+---------------------+
-|    Amazon ECR       |
-| Container Registry  |
-+---------------------+
-        |
-        v
-+--------------------------------------------------+
-|                 AWS VPC                          |
-|                                                  |
-|              +------------------+                |
-|              |    Amazon EKS    |                |
-|              |    Kubernetes    |                |
-|              |                  |                |
-|              | +--------------+ |                |
-|              | | React        | |                |
-|              | | Deployment   | |                |
-|              | | Pods         | |                |
-|              | +--------------+ |                |
-|              |        |         |                |
-|              |        v         |                |
-|              | +--------------+ |                |
-|              | | Node.js      | |                |
-|              | | Deployment   | |                |
-|              | | Pods         | |                |
-|              | +--------------+ |                |
-|              |        |         |                |
-|              |        v         |                |
-|              | +--------------+ |                |
-|              | | MongoDB      | |                |
-|              | | Deployment   | |                |
-|              | | Pods         | |                |
-|              | +--------------+ |                |
-|              +------------------+                |
-|                       |                          |
-|                       v                          |
-|             AWS Load Balancer Controller         |
-|                       |                          |
-+-----------------------|--------------------------+
-                        |
-                        v
-                  End Users / Browser
+📌 Project Overview
 
-1. Project Overview
+This project deploys a three-tier web application on Amazon EKS:
 
-This project demonstrates a complete application deployment workflow:
+Tier
 
-Application source code is maintained in GitHub.
+Technology
 
-Frontend, backend, and database components are packaged as Docker images.
+Responsibility
 
-Container images are stored in Amazon ECR.
+🎨 Presentation
 
-Amazon EKS provides the managed Kubernetes environment.
+React.js
 
-Kubernetes Deployments manage application workloads.
+User interface and browser-side application
 
-Kubernetes Services provide stable communication endpoints for Pods.
+⚙️ Application
 
-AWS Load Balancer Controller integrates Kubernetes with AWS load-balancing resources.
+Node.js
 
-End users access the application through the AWS-facing load-balancing layer.
+Backend APIs and application/business logic
 
-Terraform can be used to make infrastructure provisioning repeatable.
+🗄️ Data
 
-CI/CD tooling can automate image building and deployment.
+MongoDB
 
-2. Application Architecture
+Application data persistence
 
-The application is separated into three logical tiers.
+The application components are containerized with Docker, stored in Amazon ECR, and deployed as Kubernetes workloads on Amazon EKS.
 
-Frontend Tier
+External access is provided through the AWS load-balancing layer integrated with Kubernetes through the AWS Load Balancer Controller.
 
-Technology: React.js
+Project objective: understand the complete DevOps flow from source code → container image → registry → Kubernetes deployment → AWS load balancer → end user, while developing practical troubleshooting skills.
 
-Responsibilities:
+🏗️ Architecture
 
-Serves the user interface.
+<p align="center">
+  <img src="docs/architecture.png" alt="Three-Tier Application AWS EKS Architecture" width="100%">
+</p>
 
-Handles browser-side application logic.
+End-to-End Flow
 
-Communicates with the backend API.
+Developer
+    │
+    ▼
+GitHub Repository
+    │
+    ├───────────────┐
+    │               │
+    ▼               ▼
+React.js         Node.js
+    │               │
+    └───────┬───────┘
+            │
+            ▼
+          Docker
+            │
+            ▼
+       Amazon ECR
+            │
+            ▼
+     Amazon EKS Cluster
+            │
+     ┌──────┼───────────┐
+     │      │           │
+     ▼      ▼           ▼
+ Frontend Backend     MongoDB
+   Pods     Pods        Pods
+     │      │           │
+     └──────┴───────────┘
+            │
+            ▼
+AWS Load Balancer Controller
+            │
+            ▼
+      AWS Load Balancer
+            │
+            ▼
+       End User / Browser
 
-Is packaged into a Docker image.
+🔄 Deployment Lifecycle
 
-Runs as a Kubernetes workload.
+flowchart LR
+    A[Source Code] --> B[GitHub]
+    B --> C[Docker Build]
+    C --> D[Amazon ECR]
+    D --> E[Amazon EKS]
+    E --> F[Kubernetes Deployments]
+    F --> G[Kubernetes Services]
+    G --> H[AWS Load Balancer]
+    H --> I[End User]
+
+What happens at each stage?
+
+1. Source Code
+
+Application code is maintained in Git and GitHub.
+
+2. Containerization
+
+Docker packages each application component with its runtime dependencies.
+
+3. Image Registry
+
+Container images are tagged and pushed to Amazon ECR.
+
+4. Kubernetes Deployment
+
+Amazon EKS runs the containerized workloads through Kubernetes Deployments and Pods.
+
+5. Service Discovery
+
+Kubernetes Services provide stable endpoints for application communication.
+
+6. External Access
+
+The AWS Load Balancer Controller integrates Kubernetes with AWS load-balancing resources.
+
+7. Application Access
+
+End users access the application through the externally exposed endpoint.
+
+🧩 Application Components
+
+Frontend — React.js
+
+The frontend is responsible for:
+
+Rendering the application UI.
+
+Handling browser-side logic.
+
+Making API requests to the backend.
+
+Running as a containerized workload.
+
+Being exposed through the application entry point.
 
 Typical flow:
 
 Browser
-   |
-   v
-React Frontend
-   |
-   | HTTP/API request
-   v
+   │
+   ▼
+React.js
+   │
+   │ API Request
+   ▼
 Node.js Backend
 
-Backend Tier
+Backend — Node.js
 
-Technology: Node.js
+The backend is responsible for:
 
-Responsibilities:
+Receiving API requests.
 
-Exposes backend APIs.
+Processing application logic.
 
-Processes requests from the frontend.
+Communicating with MongoDB.
 
-Contains application/business logic.
+Returning responses to the React frontend.
 
-Communicates with MongoDB.
-
-Runs as a container inside Kubernetes.
+Running as a Kubernetes workload.
 
 Typical flow:
 
-React Frontend
-      |
-      v
+React.js
+   │
+   ▼
 Node.js API
-      |
-      v
+   │
+   ▼
 MongoDB
 
-Database Tier
+Database — MongoDB
 
-Technology: MongoDB
+MongoDB provides the application's data layer.
 
 Responsibilities:
 
-Stores application data.
+Store application data.
 
-Provides persistence for the backend.
+Serve database requests from the backend.
 
-Is isolated from direct end-user access.
+Remain inaccessible directly from public users.
 
-Runs as part of the Kubernetes/containerized application in this implementation.
+Run within the application's containerized/Kubernetes environment for this implementation.
 
-Database persistence, storage configuration, backup strategy, and high-availability behavior should be documented separately once implemented.
+Database persistence and production-grade storage behavior should be validated separately against the final Kubernetes manifests before treating them as production-ready.
 
-3. Technology Stack
+🐳 Containerization
 
-Area
-
-Technology
-
-Source Control
-
-Git, GitHub
-
-Frontend
-
-React.js
-
-Backend
-
-Node.js
-
-Database
-
-MongoDB
-
-Containerization
-
-Docker
-
-Container Registry
-
-Amazon ECR
-
-Container Orchestration
-
-Kubernetes
-
-Managed Kubernetes
-
-Amazon EKS
-
-AWS Integration
-
-AWS Load Balancer Controller
-
-Cloud
-
-AWS
-
-Infrastructure as Code
-
-Terraform
-
-CI/CD
-
-Jenkins / GitHub Actions
-
-Monitoring
-
-Prometheus, Grafana
-
-Linux
-
-Ubuntu
-
-CLI Tools
-
-AWS CLI, kubectl, eksctl, Helm
-
-The referenced challenge repository also contains material for Jenkins pipelines, Terraform-based Jenkins infrastructure, Helm-based monitoring, Prometheus/Grafana, and ArgoCD/GitOps. Those components should only be marked as implemented after they have actually been configured and tested in this project.
-
-4. End-to-End Deployment Flow
-
-Step 1 — Source Code
-
-Application source code is stored in GitHub.
-
-GitHub Repository
-       |
-       +-- Frontend
-       +-- Backend
-       +-- Database configuration
-       +-- Dockerfiles
-       +-- Kubernetes manifests
-       +-- Infrastructure code
-
-Git provides version control, change tracking, collaboration, and rollback of source changes.
-
-Step 2 — Build Docker Images
-
-Each application component is containerized.
+Each major application component is packaged as a Docker image.
 
 React Source
-    |
-    v
+    │
+    ▼
 Dockerfile
-    |
-    v
+    │
+    ▼
 Frontend Image
+    │
+    ▼
+Amazon ECR
 
 Node.js Source
-    |
-    v
+    │
+    ▼
 Dockerfile
-    |
-    v
+    │
+    ▼
 Backend Image
+    │
+    ▼
+Amazon ECR
 
-Docker provides a consistent runtime environment by packaging the application with its required dependencies.
+Containerization provides:
 
-5. Amazon ECR
+Consistent application environments.
 
-Amazon Elastic Container Registry is used as the image registry.
+Repeatable deployments.
 
-Example:
+Dependency isolation.
+
+Portable workloads.
+
+Immutable deployment artifacts.
+
+Useful Docker commands
+
+docker build -t frontend:v1 .
+docker images
+
+docker run -d -p 8080:80 frontend:v1
+
+docker ps
+docker logs <container>
+docker inspect <container>
+
+docker stop <container>
+docker rm <container>
+
+📦 Amazon ECR
+
+Amazon Elastic Container Registry stores the Docker images consumed by the EKS workloads.
+
+Example repository model:
 
 Amazon ECR
-|
-+-- frontend repository
-|      |
-|      +-- frontend:v1
-|      +-- frontend:latest
-|
-+-- backend repository
-       |
-       +-- backend:v1
-       +-- backend:latest
+│
+├── frontend
+│   ├── v1
+│   └── latest
+│
+├── backend
+│   ├── v1
+│   └── latest
+│
+└── mongodb
+    └── ...
 
-Typical workflow:
+Example authentication and push workflow:
 
-docker build -t frontend:latest .
-docker tag frontend:latest <account>.dkr.ecr.<region>.amazonaws.com/frontend:latest
-docker push <account>.dkr.ecr.<region>.amazonaws.com/frontend:latest
+aws ecr get-login-password --region <region> \
+  | docker login \
+  --username AWS \
+  --password-stdin \
+  <account-id>.dkr.ecr.<region>.amazonaws.com
 
-Kubernetes deployments then reference the ECR image.
+docker build -t frontend:v1 ./frontend
 
-6. Amazon EKS
+docker tag frontend:v1 \
+  <account-id>.dkr.ecr.<region>.amazonaws.com/frontend:v1
 
-Amazon EKS provides the managed Kubernetes environment.
+docker push \
+  <account-id>.dkr.ecr.<region>.amazonaws.com/frontend:v1
 
-EKS Cluster
-|
-+-- Kubernetes Control Plane
-|
-+-- Worker Nodes
-      |
-      +-- Frontend Pods
-      +-- Backend Pods
-      +-- MongoDB Pods
+☸️ Amazon EKS
 
-The project uses eksctl and Kubernetes tooling for cluster setup and workload management.
+Amazon EKS provides the managed Kubernetes platform used to run the application.
 
-Basic verification:
+Logical cluster model
+
+Amazon EKS
+│
+├── Control Plane
+│
+└── Worker Nodes
+    │
+    ├── Frontend Pods
+    ├── Backend Pods
+    └── MongoDB Pods
+
+The cluster can be created and managed using:
+
+AWS CLI
+
+eksctl
+
+kubectl
+
+Cluster configuration
+
+eksctl create cluster \
+  --name three-tier-cluster \
+  --region <region> \
+  --node-type <node-type> \
+  --nodes-min 2 \
+  --nodes-max 2
+
+Configure local Kubernetes access:
+
+aws eks update-kubeconfig \
+  --region <region> \
+  --name three-tier-cluster
+
+Verify:
 
 kubectl get nodes
 kubectl get pods -A
-kubectl get deployments
-kubectl get services
 
-7. Kubernetes Deployment Model
+☸️ Kubernetes Architecture
 
-Each application tier is represented as a Kubernetes workload.
+The application is represented through Kubernetes resources.
 
-Frontend
-
-Deployment
-    |
-    +-- Pod
-    +-- Pod
-    |
-    +-- Service
-
-Backend
-
-Deployment
-    |
-    +-- Pod
-    +-- Pod
-    |
-    +-- Service
-
-MongoDB
-
-Deployment
-    |
-    +-- Pod
-    +-- Pod
-    |
-    +-- Service
-
-The exact replica count and persistence configuration should match the manifests actually used in this project.
-
-8. Kubernetes Objects Used
+                  EKS Cluster
+                      │
+        ┌─────────────┼─────────────┐
+        │             │             │
+        ▼             ▼             ▼
+   Deployment    Deployment    Deployment
+    Frontend      Backend        MongoDB
+        │             │             │
+      Pods          Pods           Pods
+        │             │             │
+        ▼             ▼             ▼
+    Frontend      Backend        MongoDB
+     Service       Service        Service
 
 Deployment
 
-A Deployment manages the desired state of application Pods.
+A Kubernetes Deployment describes the desired state of an application workload.
 
-It can be used to:
+Example concepts:
 
-Maintain the desired replica count.
+replicas: 2
+selector:
+  matchLabels:
+    app: backend
+
+A Deployment can:
+
+Maintain the desired number of Pods.
 
 Replace failed Pods.
 
-Perform controlled rollouts.
+Perform rolling updates.
 
-Maintain a consistent workload definition.
+Keep workload configuration declarative.
 
-Pod
+Useful commands:
 
-A Pod is the smallest deployable Kubernetes unit and contains one or more containers.
+kubectl get deployments
+kubectl describe deployment <deployment-name>
+kubectl rollout status deployment/<deployment-name>
+kubectl rollout history deployment/<deployment-name>
+
+Pods
+
+Pods are the smallest deployable units in Kubernetes.
 
 Useful commands:
 
 kubectl get pods
+kubectl get pods -o wide
 kubectl describe pod <pod-name>
 kubectl logs <pod-name>
+kubectl logs <pod-name> --previous
+
+For interactive troubleshooting:
+
 kubectl exec -it <pod-name> -- /bin/sh
 
-Service
+Services
 
-A Kubernetes Service provides a stable network endpoint for Pods whose IP addresses can change.
-
-Typical flow:
+A Service provides a stable network abstraction for Pods.
 
 Frontend
-   |
-   v
+   │
+   ▼
 backend-service
-   |
-   v
-Backend Pod
+   │
+   ▼
+Backend Pods
 
 Useful commands:
 
@@ -401,100 +413,93 @@ kubectl get svc
 kubectl describe svc <service-name>
 kubectl get endpoints
 
-9. AWS Load Balancer Controller
+🌐 AWS Load Balancer Controller
 
-The AWS Load Balancer Controller connects Kubernetes resources with AWS load-balancing services.
+The AWS Load Balancer Controller enables Kubernetes resources to provision and manage AWS load-balancing resources.
 
-Conceptually:
+Logical flow:
 
 Internet
-   |
-   v
+   │
+   ▼
 AWS Load Balancer
-   |
-   v
-Kubernetes Service / Ingress
-   |
-   v
+   │
+   ▼
+Kubernetes Ingress / Service
+   │
+   ▼
 Application Pods
 
-The controller requires AWS IAM permissions and an IAM-enabled Kubernetes service account.
-
-Verification:
+Controller verification:
 
 kubectl get deployment \
   -n kube-system \
   aws-load-balancer-controller
 
-Troubleshooting:
+Controller logs:
 
-kubectl get pods -n kube-system
-kubectl logs -n kube-system deployment/aws-load-balancer-controller
+kubectl logs \
+  -n kube-system \
+  deployment/aws-load-balancer-controller
 
-10. Networking
+🌐 Networking
 
-The project involves multiple networking layers.
+Understanding the networking path is a major part of this project.
 
-Application-level networking
-
-Browser
-   |
- HTTP/HTTPS
-   |
-Load Balancer
-   |
+User Browser
+     │
+     ▼
+AWS Load Balancer
+     │
+     ▼
 Kubernetes Service
-   |
-Pod
-
-Kubernetes networking
-
-Pods receive network identities that can change during their lifecycle, so Services provide stable access.
+     │
+     ▼
+Backend / Frontend Pod
+     │
+     ▼
+Container Port
 
 Important concepts:
 
-Pod IP
+IP address
 
-Service IP
+Subnet
+
+Route table
+
+Security Group
+
+DNS
+
+TCP/IP
+
+HTTP/HTTPS
+
+Kubernetes Pod IP
+
+Kubernetes Service IP
 
 Port
 
 Target Port
 
-Node Port
+Load balancing
 
-Ingress / Load Balancer
+Ingress
 
-DNS
+Basic Linux networking commands
 
-11. AWS IAM
+ip addr
+ip route
+ss -tulpn
+ping <host>
+curl <url>
+nslookup <domain>
 
-IAM controls access to AWS resources.
+🏗️ Infrastructure as Code — Terraform
 
-Conceptually:
-
-IAM User / Role
-      |
-      v
-Permissions Policy
-      |
-      v
-AWS API
-
-For production environments, avoid broad permissions and long-lived access keys wherever possible. Prefer role-based access and temporary credentials when supported.
-
-Never commit the following to GitHub:
-
-AWS Access Key
-AWS Secret Key
-Kubeconfig credentials
-Private SSH keys
-Database passwords
-Application secrets
-
-12. Terraform
-
-Terraform represents infrastructure as code and makes provisioning repeatable.
+Terraform is used to model infrastructure declaratively.
 
 Typical workflow:
 
@@ -504,33 +509,50 @@ terraform validate
 terraform plan
 terraform apply
 
-Before destroying infrastructure:
+Inspect state:
 
-terraform plan
+terraform state list
+terraform show
 
-To remove Terraform-managed resources:
+Remove managed infrastructure when appropriate:
 
 terraform destroy
 
-Core concepts:
+Core Terraform concepts
 
-Providers
+Concept
 
-Resources
+Purpose
 
-Variables
+Provider
 
-Outputs
+Connects Terraform to an infrastructure platform
+
+Resource
+
+Defines infrastructure to manage
+
+Variable
+
+Makes configurations reusable
+
+Output
+
+Exposes useful resource information
 
 State
 
+Tracks Terraform-managed infrastructure
+
 Plan
+
+Previews changes
 
 Apply
 
-Drift
+Executes changes
 
-Recommended structure:
+Example structure:
 
 terraform/
 ├── provider.tf
@@ -540,133 +562,136 @@ terraform/
 ├── iam.tf
 └── eks.tf
 
-13. CI/CD
+🔁 CI/CD
 
-The CI/CD objective is to automate:
+The target delivery workflow is:
 
 Developer Push
-      |
-      v
+      │
+      ▼
 Source Checkout
-      |
-      v
-Build Application
-      |
-      v
-Build Docker Image
-      |
-      v
+      │
+      ▼
+Build / Test
+      │
+      ▼
+Docker Build
+      │
+      ▼
 Push Image to ECR
-      |
-      v
+      │
+      ▼
 Deploy to EKS
-      |
-      v
-Verify Deployment
+      │
+      ▼
+Verify Application
 
 Typical pipeline stages:
 
 Checkout
-   |
+   ↓
 Build
-   |
+   ↓
 Test
-   |
+   ↓
 Docker Build
-   |
+   ↓
 ECR Push
-   |
+   ↓
 Kubernetes Deployment
-   |
-Health Verification
+   ↓
+Health Check
 
-Secrets should be stored in the CI/CD platform's secret-management mechanism rather than hard-coded in pipeline files.
+CI/CD principles demonstrated
 
-14. Monitoring and Logging
+Automated repeatable deployments
 
-Monitoring should help answer:
+Immutable container artifacts
 
-Is the application running?
+Secret management
 
-Are Pods healthy?
+Deployment verification
 
-Are CPU/memory levels increasing?
+Failure visibility
 
-Are containers restarting?
+Rollback awareness
+
+📊 Monitoring & Logging
+
+Monitoring answers:
+
+Is the application healthy?
+
+Are Pods restarting?
+
+Is CPU/memory usage increasing?
 
 Are requests failing?
 
-Did a deployment introduce failures?
+Is the deployment stable?
 
-Kubernetes checks:
+The monitoring stack can be represented as:
+
+Application / Kubernetes
+         │
+         ├── Logs
+         │
+         └── Metrics
+               │
+               ▼
+           Prometheus
+               │
+               ▼
+            Grafana
+
+Useful Kubernetes diagnostics:
 
 kubectl get pods
 kubectl get events
-kubectl describe pod <pod>
-kubectl logs <pod>
+kubectl describe pod <pod-name>
+kubectl logs <pod-name>
 kubectl top pods
 kubectl top nodes
 
-Conceptual monitoring flow:
+🔧 Troubleshooting Playbook
 
-Application
-    |
-    +---- Logs
-    |
-    +---- Metrics
-             |
-             v
-        Prometheus
-             |
-             v
-          Grafana
+A key objective of this project is learning to troubleshoot systematically rather than changing random configuration.
 
-15. Troubleshooting Approach
-
-The project follows a layer-by-layer troubleshooting model rather than changing settings randomly.
-
-Pod is not running
+1. Pod is not starting
 
 kubectl get pods
 kubectl describe pod <pod-name>
-kubectl logs <pod-name>
 kubectl get events
 
-Possible causes:
+Check for:
 
-Image cannot be pulled
+Image issues
 
-Application process exits
+Scheduling problems
 
-Configuration error
-
-Missing environment variable
+Missing configuration
 
 Resource constraints
 
-Networking issue
+Volume problems
 
-ImagePullBackOff
-
-Check:
+2. ImagePullBackOff
 
 kubectl describe pod <pod-name>
 
-Verify:
+Validate:
 
-ECR repository
+ECR repository exists.
 
-Image name
+Image tag is correct.
 
-Image tag
+Image URL is correct.
 
-Registry authentication/permissions
+Node/workload has required permissions.
 
-Node access to ECR
+Image is available in the correct AWS region/account.
 
-CrashLoopBackOff
-
-Check:
+3. CrashLoopBackOff
 
 kubectl logs <pod-name>
 kubectl logs <pod-name> --previous
@@ -674,94 +699,109 @@ kubectl describe pod <pod-name>
 
 Investigate:
 
-Application startup failure
+Application startup errors.
 
-Environment configuration
+Incorrect environment variables.
 
-Dependency connectivity
+Missing dependencies.
 
-Port configuration
+Port configuration.
 
-Resource problems
+Database connectivity.
 
-Load balancer or ingress issue
+Runtime exceptions.
 
-Check from Kubernetes outward:
+4. Service exists but application is unreachable
 
-kubectl get ingress
+Check layer by layer:
+
+kubectl get svc
+kubectl describe svc <service-name>
+kubectl get endpoints
+kubectl get pods -o wide
+
+Then validate:
+
+Load Balancer
+    ↓
+Service
+    ↓
+Endpoints
+    ↓
+Pod
+    ↓
+Container
+    ↓
+Application
+
+5. Load Balancer target is unhealthy
+
+Check:
+
 kubectl describe ingress <ingress-name>
 kubectl get svc
 kubectl get endpoints
-kubectl get pods
 
-Then inspect AWS-side resources:
+Then inspect the AWS load balancer and target health.
 
-Load Balancer
-    |
-Target Groups
-    |
-Target Health
-    |
-Security Groups
-    |
-Network connectivity
+Potential causes:
 
-Troubleshoot one layer at a time:
+Wrong Service port.
 
-User
- ↓
-Load Balancer
- ↓
-Kubernetes Service
- ↓
-Endpoints
- ↓
-Pod
- ↓
-Container
- ↓
-Application
+Wrong target port.
 
-16. Linux Administration
+Pod not ready.
 
-Linux is used for server administration and troubleshooting.
+Application not listening on expected port.
 
-Common commands used during the project:
+Security Group/networking issue.
+
+Incorrect health-check configuration.
+
+🐧 Linux Administration
+
+Linux is the operational foundation for the deployment environment.
+
+Files & directories
 
 pwd
-ls
+ls -la
 cd
 mkdir
+touch
 cp
 mv
 rm
-cat
-less
-grep
 find
-tail
-head
+grep
 
-Permissions:
+Permissions
 
 ls -l
 chmod
 chown
 
-Processes:
+Processes
 
 ps
+ps aux
 top
 kill
 
-System resources:
+Resources
 
 df -h
 du -sh
 free -m
 uptime
 
-Networking:
+Services & logs
+
+systemctl status <service>
+journalctl -u <service>
+tail -f <log-file>
+
+Networking
 
 ip addr
 ip route
@@ -770,52 +810,89 @@ curl
 ping
 nslookup
 
-Logs:
+🔐 Security
 
-journalctl
-tail -f
+Security practices for this project include:
 
-17. Security Considerations
+Do not commit AWS access keys.
 
-Security practices considered in this project include:
+Do not commit database passwords.
 
-Avoid committing secrets to Git.
+Do not commit private SSH keys.
 
-Prefer IAM roles and temporary credentials where possible.
+Store CI/CD secrets securely.
 
-Restrict network access using security groups.
+Limit AWS IAM permissions.
 
-Keep databases inaccessible directly from the public internet.
+Restrict network traffic with security groups.
 
-Use private container registries such as ECR.
+Keep the database tier away from direct public access.
 
-Store CI/CD credentials as secrets.
+Use private container registries where appropriate.
 
-Minimize IAM privileges according to the required task.
+Use HTTPS for production traffic.
 
-For a production implementation, additional controls could include:
+Apply Kubernetes RBAC where applicable.
 
-AWS Secrets Manager / Parameter Store
+Never commit
 
-Encryption at rest
+.env
+*.pem
+*.key
+AWS access keys
+AWS secret keys
+kubeconfig files
+database passwords
+CI/CD credentials
 
-Encryption in transit
+📁 Suggested Repository Structure
 
-Kubernetes RBAC
+three-tier-application-aws-eks/
+│
+├── README.md
+│
+├── docs/
+│   └── architecture.png
+│
+├── frontend/
+│   ├── Dockerfile
+│   └── ...
+│
+├── backend/
+│   ├── Dockerfile
+│   └── ...
+│
+├── kubernetes/
+│   ├── namespace.yaml
+│   ├── frontend-deployment.yaml
+│   ├── frontend-service.yaml
+│   ├── backend-deployment.yaml
+│   ├── backend-service.yaml
+│   ├── mongodb-deployment.yaml
+│   └── ingress.yaml
+│
+├── terraform/
+│   ├── provider.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+│   ├── vpc.tf
+│   ├── iam.tf
+│   └── eks.tf
+│
+├── scripts/
+│   ├── deploy.sh
+│   └── health-check.sh
+│
+└── .gitignore
 
-Pod security controls
+🚀 Quick Deployment Workflow
 
-Image vulnerability scanning
-
-Centralized audit logging
-
-Backup and disaster recovery
-
-18. Deployment Commands
-
-Example EKS workflow:
+1. Configure AWS
 
 aws configure
+aws sts get-caller-identity
+
+2. Create EKS
 
 eksctl create cluster \
   --name three-tier-cluster \
@@ -824,342 +901,269 @@ eksctl create cluster \
   --nodes-min 2 \
   --nodes-max 2
 
-Configure kubectl:
+3. Configure Kubernetes
 
 aws eks update-kubeconfig \
   --region <region> \
   --name three-tier-cluster
 
-Verify:
+4. Verify the cluster
 
 kubectl get nodes
+kubectl get pods -A
 
-Deploy manifests:
+5. Deploy workloads
 
 kubectl apply -f kubernetes/
 
-Verify:
+6. Verify deployments
 
-kubectl get pods -A
-kubectl get svc -A
-kubectl get deployments -A
+kubectl get deployments
+kubectl get pods
+kubectl get svc
 
-Cleanup:
+7. Check application logs
 
-kubectl delete -f kubernetes/
-eksctl delete cluster \
-  --name three-tier-cluster \
-  --region <region>
+kubectl logs <pod-name>
 
-Always verify the AWS account, region, cluster name, namespaces, load balancers, ECR repositories, and other billable resources before cleanup.
+8. Check external access
 
-19. Validation Checklist
+kubectl get ingress
+kubectl get svc
 
-AWS
+🧪 Validation Checklist
 
-Correct AWS account and region selected
+Infrastructure
+
+AWS account and region verified
 
 IAM permissions verified
 
-EKS cluster created
+EKS cluster available
 
 Worker nodes registered
 
-Networking verified
+Kubernetes context configured
 
-Docker
+Application
 
-Frontend image builds successfully
+Frontend builds successfully
 
-Backend image builds successfully
+Backend builds successfully
 
-Images run locally
+MongoDB configuration validated
 
-Image tags are consistent
+Docker images created
 
-ECR
-
-Repositories created
-
-Images pushed successfully
-
-Kubernetes references correct ECR image URIs
+Images pushed to ECR
 
 Kubernetes
 
 Namespace created
 
-Deployments created
+Deployments applied
 
 Pods running
 
 Services created
 
+Endpoints populated
+
 Logs checked
 
-No unexpected restart loops
+No unexpected restarts
 
-Load Balancer
+AWS Integration
 
-AWS Load Balancer Controller healthy
+AWS Load Balancer Controller installed
 
-Load balancer created
+Required IAM integration configured
+
+Load balancer provisioned
 
 Targets healthy
 
-Application accessible externally
+Application reachable externally
 
-CI/CD
+Operations
 
-Source checkout works
+Terraform validated
 
-Docker build works
+CI/CD workflow tested
 
-Image push works
+Monitoring checked
 
-Deployment works
+Failure scenarios tested
 
-Deployment can be verified
+Cleanup procedure verified
 
-Monitoring
+🎯 Interview Preparation
 
-Logs can be retrieved
+This project should be explainable at four levels:
 
-Metrics can be inspected
+Level 1 — Architecture
 
-Pod and node health can be checked
+Be able to draw:
 
-20. Interview Knowledge Checklist
+User
+ ↓
+AWS Load Balancer
+ ↓
+Kubernetes Service
+ ↓
+Pod
+ ↓
+Container
+ ↓
+Application
 
-This project is intended to support practical discussion of:
+Level 2 — Kubernetes
 
-Linux
+Be able to explain:
 
-Process management
+Pod
 
-File permissions
+Deployment
 
-Services
+Replica
 
-Logs
+Service
 
-CPU and memory troubleshooting
+Namespace
 
-Disk troubleshooting
+Ingress
 
-Networking commands
+Labels/selectors
 
-AWS
+Rolling updates
+
+Level 3 — AWS
+
+Be able to explain:
+
+EKS
+
+ECR
+
+IAM
 
 VPC
 
 Subnets
 
-IAM
-
 Security Groups
-
-ECR
-
-EKS
 
 Load balancing
 
-AWS networking fundamentals
+Level 4 — Troubleshooting
 
-Docker
+Be able to reason through:
 
-Images vs containers
+"Pod is CrashLoopBackOff."
 
-Dockerfile
+        ↓
+kubectl get pods
+        ↓
+kubectl describe pod
+        ↓
+kubectl logs
+        ↓
+Check configuration
+        ↓
+Check dependencies
+        ↓
+Fix
+        ↓
+Verify
 
-Layers
+💡 Key Engineering Takeaways
 
-Ports
+The project demonstrates the relationship between:
 
-Networks
-
-Volumes
-
-Container logs
-
-Image tagging
-
-Kubernetes
-
-Pods
-
-Deployments
-
-Services
-
-Namespaces
-
-Labels and selectors
-
-Replica management
-
-Logs and events
-
+Application Development
+        ↓
+Containerization
+        ↓
+Image Management
+        ↓
+Orchestration
+        ↓
+Networking
+        ↓
+Cloud Infrastructure
+        ↓
+Automation
+        ↓
+Monitoring
+        ↓
 Troubleshooting
 
-Ingress/load-balancing concepts
+The important DevOps skill is not simply knowing individual commands. It is understanding how these layers interact and how to identify the failing layer when something breaks.
+
+📌 Project Status
+
+Update this section as each component is actually implemented and tested.
+
+Component
+
+Status
+
+React.js application
+
+⬜
+
+Node.js backend
+
+⬜
+
+MongoDB
+
+⬜
+
+Docker images
+
+⬜
+
+Amazon ECR
+
+⬜
+
+Amazon EKS
+
+⬜
+
+Kubernetes manifests
+
+⬜
+
+AWS Load Balancer Controller
+
+⬜
+
+External application access
+
+⬜
 
 Terraform
 
-Infrastructure as Code
-
-Providers
-
-Resources
-
-Variables
-
-State
-
-Plan
-
-Apply
-
-Drift
+⬜
 
 CI/CD
 
-Continuous Integration
-
-Continuous Delivery/Deployment
-
-Pipeline stages
-
-Artifact/container image flow
-
-Secret management
-
-Deployment verification
-
-Monitoring
-
-Metrics
-
-Logs
+⬜
 
 Prometheus
 
+⬜
+
 Grafana
 
-Application health
+⬜
 
-Resource utilization
+Troubleshooting scenarios
 
-21. Troubleshooting Scenarios Practiced
+⬜
 
-The project should be used to practice deliberately breaking and fixing common failures:
+<div align="center">
 
-Pod remains pending.
-
-Image cannot be pulled from ECR.
-
-Container exits immediately.
-
-Pod enters CrashLoopBackOff.
-
-Service has no healthy endpoints.
-
-Application is reachable inside the cluster but not externally.
-
-Load balancer target is unhealthy.
-
-DNS or routing prevents application access.
-
-Container port and Service target port do not match.
-
-Deployment succeeds but the new application version is not serving.
-
-The goal is to follow a repeatable diagnostic process rather than memorize isolated fixes.
-
-22. Learning Outcomes
-
-By completing this project, the target end-to-end workflow is:
-
-Source Code
-    ↓
-Git
-    ↓
-Docker Build
-    ↓
-Amazon ECR
-    ↓
-Amazon EKS
-    ↓
-Kubernetes Deployment
-    ↓
-Kubernetes Service
-    ↓
-AWS Load Balancer
-    ↓
-End User
-
-Operational workflow:
-
-Monitor
-   ↓
-Detect Problem
-   ↓
-Collect Logs / Metrics
-   ↓
-Identify Failure Layer
-   ↓
-Apply Fix
-   ↓
-Verify Health
-
-23. Project Status
-
-Update this section as implementation progresses.
-
-[ ] Application source code configured
-[ ] Dockerfiles created
-[ ] Docker images built
-[ ] ECR repositories created
-[ ] Images pushed to ECR
-[ ] EKS cluster created
-[ ] Kubernetes manifests deployed
-[ ] Frontend verified
-[ ] Backend verified
-[ ] MongoDB verified
-[ ] AWS Load Balancer Controller configured
-[ ] Application exposed externally
-[ ] Terraform infrastructure added
-[ ] CI/CD pipeline added
-[ ] Monitoring added
-[ ] Troubleshooting scenarios tested
-[ ] Architecture documentation completed
-
-24. References
-
-This project uses the following public project as a learning reference:
-
-Original reference repository:
-https://github.com/LondheShubham153/TWSThreeTierAppChallenge
-
-The reference repository contains material covering the application challenge, AWS EKS, Kubernetes manifests, Jenkins, Terraform, monitoring, and GitOps.
-
-This repository documents the implementation, configuration, troubleshooting, and learning outcomes performed here and does not represent the referenced project as original work.
-
-25. Author
-
-Aditya Gund
-
-Junior DevOps / Cloud Engineering Project
-
-Focus Areas:
-
-AWS
-Linux
-Docker
-Kubernetes
-Terraform
-CI/CD
-Networking
-Monitoring
-Automation
+Built as a p<img width="1774" height="887" alt="Achitecture" src="https://github.com/user-attachments/assets/931589cd-caf8-4d02-9d7e-8db5a6962775" />
