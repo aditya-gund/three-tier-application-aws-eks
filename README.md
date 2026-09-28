@@ -890,8 +890,8 @@ The important DevOps skill isn't memorizing commands. It's understanding **how t
 
 ### 👤 Author
 
-**Your Name** — DevOps Engineer  
-[GitHub](https://github.com/your-username) • [LinkedIn](https://linkedin.com/in/your-profile)
+**Aditya Gund** — DevOps Engineer  
+[GitHub]([(https://github.com/aditya-gund](https://github.com/aditya-gund)) • [LinkedIn]([[https://linkedin.com/in/your-profile](https://www.linkedin.com/in/aditya-gund/)](https://www.linkedin.com/in/aditya-gund/))
 
 ⭐ If you found this project helpful, consider giving it a star!
 
